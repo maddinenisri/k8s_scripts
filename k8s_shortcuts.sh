@@ -24,7 +24,7 @@ kctx-switch() {
     if [ -z "$1" ]; then
         echo "Usage: kctx-switch <context-name>"
         echo "Available contexts:"
-        kubectl config get-contexts --output=name
+        kubectl config get-contexts --output=name | sort
         return 1
     fi
     kubectl config use-context "$1"
@@ -33,7 +33,7 @@ kctx-switch() {
 
 # Interactive context switcher
 kctx-menu() {
-    local contexts=$(kubectl config get-contexts --output=name)
+    local contexts=$(kubectl config get-contexts --output=name | tr '\n' ' ')
     local current=$(kubectl config current-context)
     
     echo "Current context: $current"
@@ -64,7 +64,7 @@ kns-set() {
     if [ -z "$1" ]; then
         echo "Usage: kns-set <namespace>"
         echo "Available namespaces:"
-        kubectl get namespaces --output=name | cut -d/ -f2
+        kubectl get namespaces --output=name | cut -d/ -f2 | sort
         return 1
     fi
     kubectl config set-context --current --namespace="$1"
@@ -73,7 +73,7 @@ kns-set() {
 
 # Interactive namespace switcher
 kns-menu() {
-    local namespaces=$(kubectl get namespaces --output=name | cut -d/ -f2)
+    local namespaces=$(kubectl get namespaces --output=name | cut -d/ -f2 | tr '\n' ' ')
     local current=$(kns-current)
     
     echo "Current namespace: $current"
